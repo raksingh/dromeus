@@ -26,17 +26,17 @@ STATIC_FOLDER = required_folder(APP_FOLDER, "static")
 UPLOAD_FOLDER = required_folder(APP_FOLDER, "uploads")
 
 # send verification email on registration
-VERIFY_EMAIL = True
+VERIFY_EMAIL = False
 
 # account requires to be approved ?
 REQUIRES_APPROVAL = False
 
 # auto login after registration
-# requires False VERIFY_EMAIL & REQUIRES_APPROVAL 
+# requires False VERIFY_EMAIL & REQUIRES_APPROVAL
 LOGIN_AFTER_REGISTRATION = False
 
 # ALLOWED_ACTIONS in API / default Forms:
-# ["all"] 
+# ["all"]
 # ["login", "logout", "request_reset_password", "reset_password", \
 #  "change_password", "change_email", "profile", "config", "register",
 #  "verify_email", "unsubscribe"]
@@ -52,7 +52,7 @@ SMTP_TLS = False
 
 # session settings
 SESSION_TYPE = "cookies"
-SESSION_SECRET_KEY = None   # or replace with your own secret
+SESSION_SECRET_KEY = None  # or replace with your own secret
 MEMCACHE_CLIENTS = ["127.0.0.1:11211"]
 REDIS_SERVER = "localhost:6379"
 
@@ -89,8 +89,8 @@ USE_PAM = False
 USE_LDAP = False
 LDAP_SETTINGS = {
     "mode": "ad",  # Microsoft Active Directory
-    "server": "mydc.domain.com", # FQDN or IP of one Domain Controller
-    "base_dn": "cn=Users,dc=domain,dc=com", # base dn, i.e. where the users are located
+    "server": "mydc.domain.com",  # FQDN or IP of one Domain Controller
+    "base_dn": "cn=Users,dc=domain,dc=com",  # base dn, i.e. where the users are located
 }
 
 # i18n settings

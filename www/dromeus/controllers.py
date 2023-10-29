@@ -25,9 +25,53 @@ session, db, T, auth, and tempates are examples of Fixtures.
 Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app will result in undefined behavior
 """
 
-from py4web import action, request, abort, redirect, URL
+from py4web import action, request, abort, redirect, URL, Flash
 from yatl.helpers import A
-from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
+from pydal.validators import *
+from .common import (
+    db,
+    session,
+    T,
+    cache,
+    auth,
+    logger,
+    authenticated,
+    unauthenticated,
+    flash,
+)
+from py4web.utils.grid import Grid, GridClassStyleBulma, GridClassStyleBootstrap5
+from py4web.utils.form import FormStyleDefault, FormStyleBulma
+
+flash = Flash()
+
+class GridActionButton:
+    def __init__(
+        self,
+        url,
+        text=None,
+        icon=None,
+        additional_classes="",
+        additional_styles="",
+        override_classes="",
+        override_styles="",
+        message="",
+        append_id=False,
+        name=None,
+        ignore_attribute_plugin=False,
+        **attrs
+    ):
+        self.url = url
+        self.text = text
+        self.icon = icon
+        self.additional_classes = additional_classes
+        self.additional_styles = additional_styles
+        self.override_classes = override_classes
+        self.override_styles = override_styles
+        self.message = message
+        self.append_id = append_id
+        self.name = name
+        self.ignore_attribute_plugin = ignore_attribute_plugin
+        self.attrs = attrs
 
 
 @action("index")
@@ -35,5 +79,61 @@ from .common import db, session, T, cache, auth, logger, authenticated, unauthen
 def index():
     user = auth.get_user()
     message = T("Hello {first_name}".format(**user) if user else "Hello")
-    actions = {"allowed_actions": auth.param.allowed_actions}
-    return dict(message=message, actions=actions)
+    return dict(message=message)
+
+
+@action("drivers")
+@action("drivers/<path:path>", method=["GET", "POST"])
+@action.uses("drivers.html", session, db)
+def drivers(path=None):
+    grid = Grid(path,
+                query=(db.sys_db_drivers.id > 0), 
+                search_queries=None,
+                search_form=None,
+                #grid_class_style=GridClassStyleBootstrap5,
+                formstyle=FormStyleBulma)
+    return dict(locals())
+
+
+@action.uses(db, flash, session)
+def test_connect():
+    import psycopg2 as driver
+    print('ok')
+    flash.set('ok', 'green')
+
+
+test_connection_button = [
+    lambda row: GridActionButton(
+        lambda row: test_connect(),
+        text=f'Test Connection'
+    )
+]
+
+@action("connections")
+@action("connections/<path:path>", method=["GET", "POST"])
+@action.uses("connections.html", session, db, flash)
+def connections(path=None):
+    grid = Grid(path,
+                query=(db.sys_connections.id > 0), 
+                search_queries=None,
+                search_form=None,
+                grid_class_style=GridClassStyleBulma,
+                formstyle=FormStyleBulma,
+                #pre_action_buttons=test_connection_button
+                )
+    return dict(locals())
+
+
+@action("library")
+@action("library/<path:path>", method=["GET", "POST"])
+@action.uses("library.html", session, db, flash)
+def library(path=None):
+    grid = Grid(path,
+                query=(db.sys_library.id > 0), 
+                search_queries=None,
+                search_form=None,
+                grid_class_style=GridClassStyleBulma,
+                formstyle=FormStyleBulma,
+                #pre_action_buttons=test_connection_button
+                )
+    return dict(locals())
